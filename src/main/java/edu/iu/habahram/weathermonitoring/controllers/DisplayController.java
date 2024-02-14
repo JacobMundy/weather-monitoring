@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.*;
 public class DisplayController {
     private CurrentConditionDisplay currentConditionDisplay;
     private StatisticsDisplay statisticsDisplay;
-
-    public DisplayController(CurrentConditionDisplay currentConditionDisplay, StatisticsDisplay statisticsDisplay) {
+    private ForecastDisplay forecastDisplay;
+    public DisplayController(CurrentConditionDisplay currentConditionDisplay, StatisticsDisplay statisticsDisplay, ForecastDisplay forecastDisplay) {
         this.currentConditionDisplay = currentConditionDisplay;
         this.statisticsDisplay = statisticsDisplay;
+        this.forecastDisplay = forecastDisplay;
     }
 
     @GetMapping
@@ -29,6 +30,9 @@ public class DisplayController {
         html += "</li>";
         html += "<li>";
         html += String.format("<a href=/displays/%s>%s</a>", statisticsDisplay.id(), statisticsDisplay.name());
+        html += "</li>";
+        html += "<li>";
+        html += String.format("<a href=/displays/%s>%s</a>", forecastDisplay.id(), forecastDisplay.name());
         html += "</li>";
 
         html += "</ul>";
@@ -50,6 +54,14 @@ public class DisplayController {
             html = statisticsDisplay.display();
             status = HttpStatus.FOUND;
         }
+        else if(id.equalsIgnoreCase(forecastDisplay.id())) {
+            html = forecastDisplay.display();
+            status = HttpStatus.FOUND;
+        }
+        else {
+            html = "The screen id is invalid.";
+            status = HttpStatus.NOT_FOUND;
+        }
         return ResponseEntity
                 .status(status)
                 .body(html);
@@ -67,6 +79,11 @@ public class DisplayController {
             statisticsDisplay.subscribe();
             html = "Subscribed!";
             html += "<a href=\"/displays/statistics\">Statistics</a>";
+            status = HttpStatus.FOUND;
+        } else if (id.equalsIgnoreCase(forecastDisplay.id())) {
+            forecastDisplay.subscribe();
+            html = "Subscribed!";
+            html += "<a href=\"/displays/heat-index\">Forecast</a>";
             status = HttpStatus.FOUND;
         } else {
             html = "The screen id is invalid.";
@@ -90,6 +107,12 @@ public class DisplayController {
             statisticsDisplay.unsubscribe();
             html = "Unsubscribed!";
             html += "<a href=\"/displays/statistics\">Statistics</a>";
+            status = HttpStatus.FOUND;
+        }
+        else if(id.equalsIgnoreCase(forecastDisplay.id())) {
+            forecastDisplay.unsubscribe();
+            html = "Unsubscribed!";
+            html += "<a href=\"/displays/forecast\">Forecast</a>";
             status = HttpStatus.FOUND;
         }
         else {
