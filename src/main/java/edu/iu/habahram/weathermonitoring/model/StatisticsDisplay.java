@@ -9,13 +9,9 @@ import java.util.Collections;
 @Component
 public class StatisticsDisplay implements Observer, DisplayElement {
     private float temperature;
-    private float humidity;
-    private float pressure;
 
     private Subject weatherData;
     private List<Float> temperatureList = new ArrayList<>();
-
-
 
     public StatisticsDisplay(Subject weatherData) {
         this.weatherData = weatherData;
@@ -23,7 +19,7 @@ public class StatisticsDisplay implements Observer, DisplayElement {
 
     private void listController(float temperature) {
         temperatureList.add(temperature);
-        if(temperatureList.size() >= 100) {
+        if (temperatureList.size() >= 100) {
             temperatureList.remove(0);
         }
     }
@@ -39,7 +35,8 @@ public class StatisticsDisplay implements Observer, DisplayElement {
                 "display:flex;flex-wrap:wrap;justify-content:center;align-content:center;" +
                 "\">");
         html += "<section>";
-        html += String.format("<label>Avg Temp: %s</label><br />", temperatureList.stream().reduce((float) 0.0, Float::sum) / temperatureList.size());
+        html += String.format("<label>Avg Temp: %s</label><br />",
+                temperatureList.stream().mapToDouble(Float::doubleValue).sum() / temperatureList.size());
         html += String.format("<label>Min Temp: %s</label><br />", Collections.min(temperatureList));
         html += String.format("<label>Max Temp: %s</label>", Collections.max(temperatureList));
         html += "</section>";
@@ -49,7 +46,6 @@ public class StatisticsDisplay implements Observer, DisplayElement {
         html += "<a href=\"/displays/statistics/unsubscribe\">Unsubscribe</a>";
         html += "</section>";
         return html;
-
     }
 
     @Override
@@ -65,8 +61,6 @@ public class StatisticsDisplay implements Observer, DisplayElement {
     @Override
     public void update(float temperature, float humidity, float pressure) {
         this.temperature = temperature;
-        this.humidity = humidity;
-        this.pressure = pressure;
     }
 
     public void subscribe() {

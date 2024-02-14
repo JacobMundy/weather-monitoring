@@ -17,7 +17,7 @@ public class HomeController {
     }
 
     @GetMapping
-    public ResponseEntity index() {
+    public ResponseEntity<?> index() {
         String html =
                 String.format("<h1>Subscribed screens(%s):</h1>", weatherData.getObservers().size());
         html += "<ul>";
